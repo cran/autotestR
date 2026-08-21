@@ -259,7 +259,7 @@
   paste0(
     stat_name, " = ", round(estimate, 2),
     " | p ", p_label,
-    " (n=", n, ")"
+    " (n = ", n, ")"
   )
 }
 

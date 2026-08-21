@@ -19,11 +19,13 @@ transparent and responsible data interpretation.
 You can install the development version of autotestR directly from GitHub:
 
 ```r
-# Install remotes if you don't have it yet
-install.packages("remotes")
-
 # Install autotestR from GitHub
+
+install.packages("remotes")
 remotes::install_github("Luiz-Garcia-R/autotestR")
+
+# Install autotestR from CRAN
+install.packages("autotestR")
 ```
 
 
