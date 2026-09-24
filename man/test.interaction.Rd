@@ -6,8 +6,8 @@
 \title{Test for interaction between a continuous predictor and a grouping variable}
 \usage{
 test.interaction(
-  x,
   y,
+  x,
   by,
   title = NULL,
   xlab = NULL,
@@ -22,9 +22,9 @@ test.interaction(
 \method{print}{test.interaction}(x, ...)
 }
 \arguments{
-\item{x}{Numeric vector representing the continuous predictor.}
+\item{y}{Numeric vector representing the continuous predictor.}
 
-\item{y}{Numeric vector representing the continuous outcome.}
+\item{x}{Numeric vector representing the continuous outcome.}
 
 \item{by}{Grouping variable defining the interaction. Must be coercible
 to a factor with at least two levels.}
@@ -75,18 +75,26 @@ Confidence intervals are emphasized as the primary inferential quantity.
 
 # Simple example: different trends between groups
 
-set.seed(123)
+set.seed(125)
 
 n <- 60
+df_bio <- data.frame(
+  response = rnorm(n, mean = 10, sd = 2),
+  group    = rep(c('Control', 'Treatment'), each = n / 2)
+)
 
-marker <- rnorm(n, 10, 2)
-group  <- rep(c("Control", "Treatment"), each = n/2)
+df_bio$marker <- with(
+  df_bio,
+  ifelse(
+    group == 'Control',
+    2 + 1.3 * response + rnorm(n, 0, 2),
+    2 + 1.2 * response + rnorm(n, 0, 1)
+  )
+)
 
-# Same intercept, different slopes
-response <- 2 +
-  ifelse(group == "Control", 0.5, 1.2) * marker +
-  rnorm(n, 0, 1)
-
-test.interaction(marker, response, group)
+test.interaction(
+  x  = df_bio$marker,
+  y  = df_bio$response,
+  by = df_bio$group)
 
 }

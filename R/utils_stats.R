@@ -236,7 +236,7 @@
   } else {
     paste0(
       "slope diff = ", round(beta, 2),
-      " | p = ", p_txt
+      " | p ", p_txt
     )
   }
 }

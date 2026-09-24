@@ -23,7 +23,11 @@ You can install the development version of autotestR directly from GitHub:
 
 install.packages("remotes")
 remotes::install_github("Luiz-Garcia-R/autotestR")
+```
 
+Or direct from CRAN:
+
+```r 
 # Install autotestR from CRAN
 install.packages("autotestR")
 ```
@@ -77,6 +81,7 @@ Many functions in autotestR automatically evaluate key assumptions
 
 When potential issues are detected, the user is informed through
 clear warnings and messages, helping prevent inappropriate test usage.
+
 
 ### Basic usage
 
