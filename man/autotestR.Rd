@@ -31,13 +31,13 @@ library(autotestR)
 \section{Independent t test}{
 group1 <- rnorm(30, 10, 2)
 group2 <- rnorm(30, 12, 2)
-test.t(group1, group2)
+test_t(group1, group2)
 }
 
 \section{Chi-squared test}{
 var1 <- sample(c("A", "B"), 100, replace = TRUE)
 var2 <- sample(c("Yes", "No"), 100, replace = TRUE)
-test.chi(var1, var2)
+test_chi(var1, var2)
 }
 
 \section{Multiple test (t test or Mann–Whitney)}{
@@ -47,20 +47,20 @@ treatment = rnorm(30, 12),
 test1     = rnorm(30, 11),
 test2     = rnorm(30, 15)
 )
-test.tmulti(df)
+test_t_multi(df)
 }
 
 \section{ANOVA with post hoc test}{
 g1 <- rnorm(20, 5)
 g2 <- rnorm(20, 7)
 g3 <- rnorm(20, 6)
-test.anova(g1, g2, g3)
+test_anova(g1, g2, g3)
 }
 
 \section{Correlation test}{
 x <- rnorm(30)
 y <- x + rnorm(30, 0, 1)
-test.correlation(x, y)
+test_correlation(x, y)
 }
 
 \author{

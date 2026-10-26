@@ -1,18 +1,29 @@
 
 # autotestR
 
-<!-- badges: start -->
-<!-- badges: end -->
+<!-- badges: start --> <!-- badges: end -->
 
-## Overview
+<table>
+<tr>
+<td width="70%" valign="top">
 
-**autotestR** is an R package designed to simplify and improve statistical analysis
-in the life sciences.
+**Statistical analysis, from testing to interpretation.**
 
-It combines automatic test selection, diagnostic evaluation,
-effect size reporting, and intuitive visualization to support
-transparent and responsible data interpretation.
+autotestR is an R package designed to support transparent and responsible statistical analysis in the life sciences.
 
+It combines automatic test selection, assumption diagnostics, effect size estimation with confidence intervals, and intuitive visualization across group comparisons, categorical data, correlation analyses, and multi-test workflows.
+
+By emphasizing uncertainty, diagnostic evaluation, and biological interpretation, autotestR encourages researchers to look beyond p-values and make better-informed analytical decisions.
+
+</td>
+
+<td width="30%" align="center" valign="middle">
+
+<img src=".github/images/logo_autotestR.png" width="160" alt="autotestR logo">
+
+</td>
+</tr>
+</table>
 
 ## Installation
 
@@ -76,11 +87,9 @@ This makes autotestR especially suitable for exploratory and applied research in
 
 ## Automatic diagnostics and warnings
 
-Many functions in autotestR automatically evaluate key assumptions
-(e.g., normality, homoscedasticity, expected frequencies).
+Many functions in autotestR automatically evaluate key assumptions (e.g., normality, homoscedasticity, expected frequencies).
 
-When potential issues are detected, the user is informed through
-clear warnings and messages, helping prevent inappropriate test usage.
+When potential issues are detected, the user is informed through clear warnings and messages, helping prevent inappropriate test usage.
 
 
 ### Basic usage
@@ -91,12 +100,12 @@ library(autotestR)
 # Independent t test
 group1 <- rnorm(30, 10, 2)
 group2 <- rnorm(30, 12, 2)
-test.t(group1, group2)
+test_t(group1, group2)
 
 # Chi-squared test
 var1 <- sample(c("A", "B"), 100, replace = TRUE)
 var2 <- sample(c("Yes", "No"), 100, replace = TRUE)
-test.chi(var1, var2)
+test_chi(var1, var2)
 
 # Multiple test (t test or Mann–Whitney)
 df <- data.frame(
@@ -105,18 +114,18 @@ df <- data.frame(
   test1     = rnorm(30, 11),
   test2     = rnorm(30, 15)
 )
-test.tmulti(df)
+test_t_multi(df)
 
 # ANOVA with post hoc test
 g1 <- rnorm(20, 5)
 g2 <- rnorm(20, 7)
 g3 <- rnorm(20, 6)
-test.anova(g1, g2, g3)
+test_anova(g1, g2, g3)
 
 # Correlation test
 x <- rnorm(30)
 y <- x + rnorm(30, 0, 1)
-test.correlation(x, y)
+test_correlation(x, y)
 ```
 
 

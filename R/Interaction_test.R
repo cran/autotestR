@@ -18,9 +18,10 @@
 #'   (default: 0.95).
 #' @param help Logical. If TRUE, shows a detailed explanation of the function.
 #'        Default: FALSE.
+#' @param colors Character. Optional point and line colors.
 #' @param verbose Logical. If TRUE, prints detailed messages. Default: TRUE.
 #'
-#' @return An object of class \code{"test.interaction"} containing:
+#' @return An object of class \code{"test_interaction"} containing:
 #' \itemize{
 #'   \item \code{model}: the fitted linear model,
 #'   \item \code{interaction}: estimated interaction effects with confidence intervals,
@@ -56,34 +57,38 @@
 #'   )
 #' )
 #'
-#' test.interaction(
+#' test_interaction(
 #'   x  = df_bio$marker,
 #'   y  = df_bio$response,
 #'   by = df_bio$group)
 #'
 #' @export
 
-test.interaction <- function(
-    y,
-    x,
-    by,
-    title = NULL,
-    xlab = NULL,
-    ylab = NULL,
-    plot = TRUE,
-    style = c("clean", "CI", "facet"),
-    conf.level = 0.95,
-    verbose = TRUE,
-    help = FALSE
+test_interaction <- function(y,
+                             x,
+                             by,
+                             title = NULL,
+                             xlab = NULL,
+                             ylab = NULL,
+                             plot = TRUE,
+                             style = c("clean", "CI", "facet"),
+                             conf.level = 0.95,
+                             colors = NULL,
+                             verbose = TRUE,
+                             help = FALSE
 ) {
 
-  style <- match.arg(style)
+style <- match.arg(style)
 
-  if (help) {
-    if (verbose) {
-      message("
+# =============================================================================
+# 1. Quick help block
+# =============================================================================
 
-Function test.interaction()
+if (help) {
+  if (verbose) {
+    message("
+
+Function test_interaction()
 
 Description:
   Tests whether the association between a continuous predictor and an outcome
@@ -111,7 +116,7 @@ group == 'Control',
 )
 )
 
-test.interaction(
+test_interaction(
 x  = df_bio$marker,
 y  = df_bio$response,
 by = df_bio$group)
@@ -121,18 +126,8 @@ by = df_bio$group)
   return(invisible(NULL))
 }
 
-pretty_interaction_term <- function(term, by_var) {
-  # Remove 'x:' prefix
-  term <- sub("^x:", "", term)
-
-  # Remove variable name (by)
-  term <- sub(paste0("^", by_var), "", term)
-
-  paste0("Interaction (", term, ")")
-}
-
 # =============================================================================
-# Input validation
+# 2. Input validation
 # =============================================================================
 
 if (!is.numeric(x) || !is.numeric(y)) {
@@ -155,7 +150,10 @@ if (nlevels(df$by) < 2) {
   stop("'by' must have at least two levels.", call. = FALSE)
 }
 
-# Variable labels (for plots)
+# ===============================================
+# 2.1. Variable labels (for plots)
+# ===============================================
+
 x_var  <- deparse(substitute(x))
 y_var  <- deparse(substitute(y))
 by_var <- deparse(substitute(by))
@@ -171,7 +169,7 @@ y_var  <- clean_label(y_var)
 by_var <- clean_label(by_var)
 
 # =============================================================================
-# Model
+# 3. Model
 # =============================================================================
 
 fit <- lm(y ~ x * by, data = df)
@@ -183,7 +181,7 @@ interaction_terms <- grep("^x:|:x$", rownames(coef_tbl), value = TRUE)
 
 interaction_info <- lapply(interaction_terms, function(term) {
 
-  term_pretty <- pretty_interaction_term(term, by_var)
+  term_pretty <- .pretty_interaction_term(term, by_var)
 
   list(
     term = term_pretty,
@@ -209,7 +207,7 @@ summary_table <- do.call(data.frame, summary_table)
 main_interaction <- interaction_info[[1]]
 
 # =============================================================================
-# Plot
+# 4. Plot
 # =============================================================================
 
 g <- NULL
@@ -222,10 +220,18 @@ if (plot) {
   ) +
     ggplot2::theme_minimal(base_size = 12)
 
+  # ===============================================
+  # 4.1. Clean
+  # ===============================================
+
   if (style == "clean") {
     g <- base_plot +
       ggplot2::geom_point(alpha = 0.6, size = 2) +
       ggplot2::geom_smooth(method = "lm", se = FALSE)
+
+  # ===============================================
+  # 4.2. CI
+  # ===============================================
 
   } else if (style == "CI") {
     g <- base_plot +
@@ -237,13 +243,30 @@ if (plot) {
         alpha = 0.25
       )
 
+  # ===============================================
+  # 4.3. Facet
+  # ===============================================
+
   } else if (style == "facet") {
-    g <- ggplot2::ggplot(df, ggplot2::aes(x, y)) +
+    g <- base_plot +
       ggplot2::geom_point(alpha = 0.6, size = 2) +
       ggplot2::geom_smooth(method = "lm", se = FALSE) +
-      ggplot2::facet_wrap(~ by) +
-      ggplot2::theme_minimal(base_size = 12)
+      ggplot2::facet_wrap(~ by)
   }
+
+  # ===============================================
+  # 4.4. Custom colors
+  # ===============================================
+
+  if (!is.null(colors)) {
+    g <- g +
+      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::scale_fill_manual(values = colors)
+  }
+
+  # ===============================================
+  # 4.4. Additional labs
+  # ===============================================
 
   if (style %in% c("clean", "CI")) {
     g <- g +
@@ -273,10 +296,10 @@ if (plot) {
 }
 
 # =============================================================================
-# Return
+# 5. Return
 # =============================================================================
 
-out <- list(
+obj <- list(
   call = match.call(),
   model = fit,
   interaction = interaction_info,
@@ -287,19 +310,21 @@ out <- list(
   verbose = verbose
 )
 
-class(out) <- "test.interaction"
-out
+class(obj) <- "test_interaction"
+
+obj
+
 }
 
 # =============================================================================
-# S3 Output
+# 6. S3 Output
 # =============================================================================
-#' @method print test.interaction
+#' @method print test_interaction
 #' @param ... Additional arguments passed to other print methods (currently ignored)
 #' @export
-#' @rdname test.interaction
+#' @rdname test_interaction
 
-print.test.interaction <- function(x, ...) {
+print.test_interaction <- function(x, ...) {
 
 if (!isTRUE(x$verbose)) {
   return(invisible(x))
@@ -323,25 +348,23 @@ if (!isTRUE(x$verbose)) {
   for (info in x$interaction) {
 
     cat(
-      info$term, "\n",
-      "  Beta = ", round(info$beta, 3),
-      " | CI = [",
-      round(info$ci[1], 3), ", ",
-      round(info$ci[2], 3),
-      "]",
-      " | p = ",
-      .format_pval(info$p),
-      "\n\n",
-      sep = ""
-    )
+      info$term, "\n", "\n")
 
-  }
+    cat(
+      "Beta = ", round(info$beta, 3), "\n")
+
+    cat(
+      "CI = [", round(info$ci[1], 3), ",", round(info$ci[2], 3),"]", "\n")
+
+    cat(
+      "p = ", .format_pval(info$p), "\n", sep = "")
+    }
 })
 
 if (!is.null(x$plot)) {
   print(x$plot)
 }
 
-invisible(x)
+return(invisible(x))
 
 }

@@ -1,0 +1,13 @@
+citHeader("To cite autornaR:")
+
+bibentry(
+  bibtype = "Manual",
+  title   = "autotestR: Simplified statistical analysis",
+  author  = person(
+    "Luiz Fernando", "Cardoso Garcia",
+    comment = "Universidade Federal do Paraná"
+  ),
+  year    = "2025",
+  note    = "R package version 1.3.0",
+  url     = "https://github.com/Luiz-Garcia-R/autotestR"
+)
